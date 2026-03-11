@@ -225,7 +225,8 @@
             const use_case = document.getElementById('useCase').value;
 
             try {
-                const API_BASE = 'https://kirapay-api.onrender.com';
+                // UPDATE THIS to your middleware API URL
+            const API_BASE = 'https://your-middleware-url.com';
                 const res = await fetch(`${API_BASE}/v1/agents/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
