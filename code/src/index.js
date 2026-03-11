@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 
 // Initialize database first
 require('./config/database');
@@ -15,6 +16,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Request logging
 app.use((req, res, next) => {
@@ -29,6 +31,11 @@ app.use((req, res, next) => {
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Serve landing page
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 // Routes
