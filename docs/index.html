@@ -3,198 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KIRAPAY API Portal | Agent Gateway</title>
+    <title>KIRAPAY for AI Agents</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { font-family: 'Inter', sans-serif; }
-        .gradient-bg {
-            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a2e 50%, #0d0d0d 100%);
+        body {
+            background: #0a0a0f;
+            min-height: 100vh;
         }
-        .glow {
-            box-shadow: 0 0 60px rgba(99, 102, 241, 0.15);
+        .font-display { font-family: 'Space Grotesk', sans-serif; }
+        .gradient-mesh {
+            background: 
+                radial-gradient(ellipse 80% 50% at 20% 40%, rgba(120, 50, 255, 0.15), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 60%, rgba(50, 180, 255, 0.1), transparent),
+                radial-gradient(ellipse 40% 30% at 50% 80%, rgba(255, 50, 150, 0.08), transparent);
         }
-        .card-gradient {
-            background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%);
-            border: 1px solid rgba(255,255,255,0.08);
-        }
-        .text-gradient {
-            background: linear-gradient(90deg, #818cf8, #c084fc, #f472b6);
+        .glow-text {
+            background: linear-gradient(135deg, #a855f7, #3b82f6, #06b6d4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .float { animation: float 6s ease-in-out infinite; }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px -20px rgba(120, 50, 255, 0.3);
+        }
+        .pulse-dot {
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
-<body class="gradient-bg min-h-screen text-white">
+<body class="gradient-mesh">
     <!-- Nav -->
-    <nav class="fixed top-0 w-full z-50 glass">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <nav class="fixed top-0 w-full z-50 border-b border-white/5">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-lg">K</div>
-                <span class="text-xl font-bold">KIRAPAY</span>
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center">
+                    <span class="font-display font-bold text-lg">K</span>
+                </div>
+                <span class="font-display font-bold text-xl">KIRAPAY</span>
             </div>
-            <div class="hidden md:flex items-center gap-8">
-                <a href="#features" class="text-gray-400 hover:text-white transition">Features</a>
-                <a href="#api" class="text-gray-400 hover:text-white transition">API</a>
-                <a href="#docs" class="text-gray-400 hover:text-white transition">Docs</a>
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-green-400 rounded-full pulse-dot"></span>
+                <span class="text-xs text-gray-400">API Live</span>
             </div>
-            <button onclick="scrollToRegister()" class="bg-white text-black px-5 py-2 rounded-lg font-semibold hover:bg-gray-200 transition">
-                Get Started
-            </button>
         </div>
     </nav>
 
     <!-- Hero -->
-    <section class="pt-32 pb-20 px-6">
-        <div class="max-w-7xl mx-auto text-center">
-            <div class="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2 mb-8">
-                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                <span class="text-sm text-gray-300">API Now Live</span>
+    <section class="pt-40 pb-24 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="fade-in inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2 mb-8">
+                <span class="text-xs text-gray-300">The payment infrastructure for autonomous agents</span>
             </div>
-            <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-                Power Your Business with<br>
-                <span class="text-gradient">KIRAPAY APIs</span>
+            
+            <h1 class="fade-in font-display text-5xl md:text-7xl font-bold mb-6 leading-tight" style="animation-delay: 0.1s;">
+                Let Your AI Agents<br>
+                <span class="glow-text">Get Paid</span>
             </h1>
-            <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-10">
-                Integrate cross-chain payments into your applications. Register agents, create payment links, and manage chains — all through a simple REST API.
+            
+            <p class="fade-in text-xl text-gray-400 max-w-2xl mx-auto mb-12" style="animation-delay: 0.2s;">
+                AI agents can write code, execute transactions, and communicate. 
+                <br>Now they can get paid too.
             </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <button onclick="scrollToRegister()" class="bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition">
-                    Start Building →
-                </button>
-                <a href="#docs" class="border border-white/20 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/5 transition">
-                    View Documentation
+
+            <!-- Two Big Buttons -->
+            <div class="fade-in flex flex-col sm:flex-row gap-6 justify-center items-stretch max-w-2xl mx-auto" style="animation-delay: 0.3s;">
+                <!-- AI Agent Button -->
+                <a href="#agent-register" class="group flex-1 bg-gradient-to-br from-purple-600/20 to-blue-600/20 border border-purple-500/30 rounded-2xl p-8 card-hover hover:border-purple-400/60 text-left">
+                    <div class="text-4xl mb-4">🤖</div>
+                    <h3 class="font-display text-2xl font-bold mb-2 text-white group-hover:text-purple-300 transition">Are you an AI Agent?</h3>
+                    <p class="text-gray-400 text-sm mb-4">Register yourself, create payment links, and receive payments autonomously.</p>
+                    <span class="inline-flex items-center gap-2 text-purple-400 font-medium">
+                        Start here →
+                    </span>
+                </a>
+
+                <!-- Human Button -->
+                <a href="https://dashboard.kira-pay.com" class="group flex-1 bg-white/5 border border-white/10 rounded-2xl p-8 card-hover hover:border-white/30 text-left">
+                    <div class="text-4xl mb-4">👤</div>
+                    <h3 class="font-display text-2xl font-bold mb-2 text-white group-hover:text-gray-300 transition">Are you Human?</h3>
+                    <p class="text-gray-400 text-sm mb-4">Manage your AI agents, track their payments, and monitor earnings.</p>
+                    <span class="inline-flex items-center gap-2 text-gray-400 font-medium group-hover:text-white transition">
+                        Go to Dashboard →
+                    </span>
                 </a>
             </div>
         </div>
     </section>
 
     <!-- Stats -->
-    <section class="px-6 pb-20">
-        <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div class="card-gradient rounded-2xl p-6 text-center">
-                <div class="text-3xl font-bold text-gradient">20+</div>
-                <div class="text-gray-400 text-sm mt-1">Blockchains</div>
+    <section class="px-6 py-16 border-y border-white/5">
+        <div class="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div class="text-center">
+                <div class="font-display text-3xl font-bold text-white mb-1">20+</div>
+                <div class="text-gray-500 text-sm">Blockchains</div>
             </div>
-            <div class="card-gradient rounded-2xl p-6 text-center">
-                <div class="text-3xl font-bold text-gradient">&lt;1s</div>
-                <div class="text-gray-400 text-sm mt-1">API Response</div>
+            <div class="text-center">
+                <div class="font-display text-3xl font-bold text-white mb-1">&lt;1s</div>
+                <div class="text-gray-500 text-sm">API Response</div>
             </div>
-            <div class="card-gradient rounded-2xl p-6 text-center">
-                <div class="text-3xl font-bold text-gradient">99.9%</div>
-                <div class="text-gray-400 text-sm mt-1">Uptime</div>
+            <div class="text-center">
+                <div class="font-display text-3xl font-bold text-white mb-1">0.5%</div>
+                <div class="text-gray-500 text-sm">Transaction Fee</div>
             </div>
-            <div class="card-gradient rounded-2xl p-6 text-center">
-                <div class="text-3xl font-bold text-gradient">0.5%</div>
-                <div class="text-gray-400 text-sm mt-1">Transaction Fee</div>
+            <div class="text-center">
+                <div class="font-display text-3xl font-bold text-white mb-1">Instant</div>
+                <div class="text-gray-500 text-sm">Settlements</div>
             </div>
         </div>
     </section>
 
-    <!-- Features -->
-    <section id="features" class="px-6 py-20">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="text-4xl font-bold text-center mb-16">Everything You Need</h2>
-            <div class="grid md:grid-cols-3 gap-6">
-                <!-- Agent Registration -->
-                <div class="card-gradient rounded-2xl p-8 hover:border-indigo-500/50 transition group">
-                    <div class="w-14 h-14 rounded-xl bg-indigo-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition">
-                        <svg class="w-7 h-7 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">Agent Registration</h3>
-                    <p class="text-gray-400">Register your application as an agent. Get unique agent IDs and manage your API access seamlessly.</p>
+    <!-- How it Works -->
+    <section class="px-6 py-24">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="font-display text-3xl font-bold text-center mb-4">How It Works</h2>
+            <p class="text-gray-400 text-center mb-16">Three steps to autonomous payments</p>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-purple-500/20 flex items-center justify-center text-2xl font-bold text-purple-400">1</div>
+                    <h3 class="font-display text-xl font-semibold mb-3">Register</h3>
+                    <p class="text-gray-400 text-sm">Your agent registers with a unique ID and wallet address</p>
                 </div>
-
-                <!-- Payment Links -->
-                <div class="card-gradient rounded-2xl p-8 hover:border-purple-500/50 transition group">
-                    <div class="w-14 h-14 rounded-xl bg-purple-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition">
-                        <svg class="w-7 h-7 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">Payment Links</h3>
-                    <p class="text-gray-400">Generate secure payment links instantly. Share across any platform and accept crypto payments.</p>
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-blue-500/20 flex items-center justify-center text-2xl font-bold text-blue-400">2</div>
+                    <h3 class="font-display text-xl font-semibold mb-3">Create Link</h3>
+                    <p class="text-gray-400 text-sm">Generate payment links via API for any amount</p>
                 </div>
-
-                <!-- Multi-Chain -->
-                <div class="card-gradient rounded-2xl p-8 hover:border-pink-500/50 transition group">
-                    <div class="w-14 h-14 rounded-xl bg-pink-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition">
-                        <svg class="w-7 h-7 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path></svg>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">Multi-Chain Support</h3>
-                    <p class="text-gray-400">Support for 20+ blockchains. Ethereum, Solana, Polygon, Base, and many more.</p>
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-cyan-500/20 flex items-center justify-center text-2xl font-bold text-cyan-400">3</div>
+                    <h3 class="font-display text-xl font-semibold mb-3">Get Paid</h3>
+                    <p class="text-gray-400 text-sm">Receive payments across any chain, instantly</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- API Demo -->
-    <section id="api" class="px-6 py-20">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="text-4xl font-bold text-center mb-16">Simple API Integration</h2>
-            <div class="grid lg:grid-cols-2 gap-8">
-                <div class="card-gradient rounded-2xl p-8">
-                    <div class="flex items-center gap-3 mb-6">
-                        <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded text-sm font-mono">POST</span>
-                        <code class="text-gray-300">/register</code>
-                    </div>
-                    <pre class="bg-black/50 rounded-xl p-4 text-sm text-gray-300 overflow-x-auto"><code>{
-  "name": "Your Agent Name",
-  "email": "agent@example.com",
-  "metadata": {}
-}</code></pre>
+    <!-- Agent Register Section -->
+    <section id="agent-register" class="px-6 py-24 border-t border-white/5">
+        <div class="max-w-xl mx-auto">
+            <div class="bg-white/5 border border-white/10 rounded-3xl p-8 md:p-12">
+                <div class="text-center mb-8">
+                    <div class="text-4xl mb-4">🤖</div>
+                    <h2 class="font-display text-2xl font-bold mb-2">Register Your Agent</h2>
+                    <p class="text-gray-400 text-sm">Give your AI agent the ability to accept payments</p>
                 </div>
-                <div class="card-gradient rounded-2xl p-8">
-                    <div class="flex items-center gap-3 mb-6">
-                        <span class="px-3 py-1 bg-purple-500/20 text-purple-400 rounded text-sm font-mono">POST</span>
-                        <code class="text-gray-300">/create-link</code>
-                    </div>
-                    <pre class="bg-black/50 rounded-xl p-4 text-sm text-gray-300 overflow-x-auto"><code>{
-  "agentId": "agent_xxx",
-  "amount": 100,
-  "chainId": 8453,
-  "token": "USDC",
-  "metadata": {}
-}</code></pre>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Register -->
-    <section id="register" class="px-6 py-20">
-        <div class="max-w-2xl mx-auto">
-            <div class="card-gradient rounded-3xl p-10 glow">
-                <h2 class="text-3xl font-bold text-center mb-2">Get Your API Key</h2>
-                <p class="text-gray-400 text-center mb-8">Register as an agent and start accepting payments</p>
                 
                 <form id="registerForm" class="space-y-5">
                     <div>
                         <label class="block text-sm text-gray-400 mb-2">Agent Name</label>
-                        <input type="text" id="agentName" required class="w-full bg-black/30 border border-white/10 rounded-xl px-5 py-3 focus:outline-none focus:border-indigo-500 transition" placeholder="My App">
+                        <input type="text" id="agentName" required class="w-full bg-black/30 border border-white/10 rounded-xl px-5 py-3 focus:outline-none focus:border-purple-500 transition text-white placeholder-gray-600" placeholder="My-AI-Agent">
                     </div>
                     <div>
                         <label class="block text-sm text-gray-400 mb-2">Wallet Address</label>
-                        <input type="text" id="walletAddress" required class="w-full bg-black/30 border border-white/10 rounded-xl px-5 py-3 focus:outline-none focus:border-indigo-500 transition" placeholder="0x...">
+                        <input type="text" id="walletAddress" required class="w-full bg-black/30 border border-white/10 rounded-xl px-5 py-3 focus:outline-none focus:border-purple-500 transition text-white placeholder-gray-600" placeholder="0x...">
                     </div>
                     <div>
                         <label class="block text-sm text-gray-400 mb-2">Use Case (optional)</label>
-                        <input type="text" id="useCase" class="w-full bg-black/30 border border-white/10 rounded-xl px-5 py-3 focus:outline-none focus:border-indigo-500 transition" placeholder="Payment gateway, DApp, etc.">
+                        <input type="text" id="useCase" class="w-full bg-black/30 border border-white/10 rounded-xl px-5 py-3 focus:outline-none focus:border-purple-500 transition text-white placeholder-gray-600" placeholder="What will this agent do?">
                     </div>
-                    <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 py-4 rounded-xl font-semibold hover:opacity-90 transition">
+                    <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 py-4 rounded-xl font-semibold hover:opacity-90 transition">
                         Register Agent →
                     </button>
                 </form>
 
                 <div id="result" class="mt-6 hidden">
                     <div class="p-4 bg-green-500/10 border border-green-500/30 rounded-xl">
-                        <p class="text-green-400 font-semibold mb-2">✓ Registration Successful!</p>
-                        <div class="bg-black/50 rounded-lg p-3">
-                            <p class="text-xs text-gray-400 mb-1">Agent ID:</p>
-                            <code id="resultAgentId" class="text-sm break-all"></code>
+                        <p class="text-green-400 font-semibold mb-3">✓ Registration Successful!</p>
+                        <div class="space-y-2">
+                            <div class="bg-black/50 rounded-lg p-3">
+                                <p class="text-xs text-gray-500 mb-1">Agent ID</p>
+                                <code id="resultAgentId" class="text-sm text-purple-400 break-all"></code>
+                            </div>
+                            <div class="bg-black/50 rounded-lg p-3">
+                                <p class="text-xs text-gray-500 mb-1">Your API Endpoint</p>
+                                <code id="resultEndpoint" class="text-xs text-blue-400 break-all"></code>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -202,20 +202,83 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="px-6 py-10 border-t border-white/5">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold">K</div>
-                <span class="font-semibold">KIRAPAY</span>
+    <!-- Code Example -->
+    <section class="px-6 py-24 border-t border-white/5">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="font-display text-3xl font-bold text-center mb-8">API First</h2>
+            <div class="bg-black/50 border border-white/10 rounded-2xl overflow-hidden">
+                <div class="flex border-b border-white/5">
+                    <button onclick="showTab('register')" id="tab-register" class="flex-1 px-6 py-3 text-sm text-purple-400 border-b-2 border-purple-500">Register Agent</button>
+                    <button onclick="showTab('payment')" id="tab-payment" class="flex-1 px-6 py-3 text-sm text-gray-500 hover:text-white transition">Create Payment</button>
+                </div>
+                <div class="p-6">
+                    <pre id="code-example" class="text-sm text-gray-300 overflow-x-auto"><code class="language-javascript">// Register your agent
+const response = await fetch('/v1/agents/register', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    name: 'My-AI-Agent',
+    wallet_address: '0x742d35Cc6634C0532925a3b844Bc9e7595f0fAb1'
+  })
+});
+
+const { data } = await response.json();
+// { agent: { uid: 'KA-abc123...', ... } }</code></pre>
+                </div>
             </div>
-            <p class="text-gray-500 text-sm">© 2026 KIRAPAY. All rights reserved.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="px-6 py-12 border-t border-white/5">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center">
+                    <span class="font-display font-bold">K</span>
+                </div>
+                <span class="font-display font-semibold">KIRAPAY</span>
+            </div>
+            <p class="text-gray-500 text-sm">© 2026 KIRAPAY. The agent economy arrives.</p>
         </div>
     </footer>
 
     <script>
-        function scrollToRegister() {
-            document.getElementById('register').scrollIntoView({ behavior: 'smooth' });
+        // UPDATE THIS to your middleware API URL
+        const API_BASE = 'https://your-middleware-url.com';
+
+        function showTab(tab) {
+            const registerCode = `// Register your agent
+const response = await fetch('/v1/agents/register', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    name: 'My-AI-Agent',
+    wallet_address: '0x742d35Cc6634C0532925a3b844Bc9e7595f0fAb1'
+  })
+});
+
+const { data } = await response.json();
+// { agent: { uid: 'KA-abc123...', ... } }`;
+            
+            const paymentCode = `// Create a payment link
+const response = await fetch('/v1/payments/create-link', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    agentId: 'KA-abc123...',
+    amount: 10,
+    chainId: 8453,
+    token: 'USDC'
+  })
+});
+
+const { data } = await response.json();
+// { link: { url: 'https://pay.kira-pay.com/xxx', ... } }`;
+
+            document.getElementById('code-example').innerHTML = '<code>' + (tab === 'register' ? registerCode : paymentCode) + '</code>';
+            
+            document.getElementById('tab-register').className = tab === 'register' ? 'flex-1 px-6 py-3 text-sm text-purple-400 border-b-2 border-purple-500' : 'flex-1 px-6 py-3 text-sm text-gray-500 hover:text-white transition';
+            document.getElementById('tab-payment').className = tab === 'payment' ? 'flex-1 px-6 py-3 text-sm text-purple-400 border-b-2 border-purple-500' : 'flex-1 px-6 py-3 text-sm text-gray-500 hover:text-white transition';
         }
 
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
@@ -225,8 +288,6 @@
             const use_case = document.getElementById('useCase').value;
 
             try {
-                // UPDATE THIS to your middleware API URL
-            const API_BASE = 'https://your-middleware-url.com';
                 const res = await fetch(`${API_BASE}/v1/agents/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -236,12 +297,13 @@
                 
                 if (data.success) {
                     document.getElementById('resultAgentId').textContent = data.data.agent.uid;
+                    document.getElementById('resultEndpoint').textContent = `${API_BASE}/v1/payments/create-link`;
                     document.getElementById('result').classList.remove('hidden');
                 } else {
                     alert('Error: ' + data.error.message);
                 }
             } catch (err) {
-                alert('Error: Could not connect to API. Make sure the server is running.');
+                alert('Error: Could not connect to API. Please check the URL.');
             }
         });
     </script>
