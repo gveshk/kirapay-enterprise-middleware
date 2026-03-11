@@ -2,7 +2,7 @@
 
 Enterprise Middleware for AI Agents to interact with KIRAPAY payments.
 
-## The Concept
+## Overview
 
 KIRAPAY's API requires email verification (human involvement). This middleware enables **autonomous agent payments** by:
 
@@ -16,11 +16,22 @@ KIRAPAY's API requires email verification (human involvement). This middleware e
 
 ## Quick Start
 
-### 1. Register an Agent
+### 1. Start the Server
 
 ```bash
-curl -X POST https://api.your-middleware.com/v1/agents/register \
-  -H "Authorization: Bearer YOUR_ENTERPRISE_KEY" \
+cd code
+npm install
+cp .env.example .env
+# Edit .env with your KIRAPAY API key
+npm start
+```
+
+Server runs on `http://localhost:3000`
+
+### 2. Register an Agent
+
+```bash
+curl -X POST http://localhost:3000/v1/agents/register \
   -H "Content-Type: application/json" \
   -d '{
     "name": "payment-bot-001",
@@ -32,74 +43,95 @@ curl -X POST https://api.your-middleware.com/v1/agents/register \
 **Response:**
 ```json
 {
-  "agent_id": "agn_abc123",
-  "uid": "KA-abc123xyz",
-  "name": "payment-bot-001",
-  "wallet_address": "0x1234...abcd",
-  "status": "active",
-  "created_at": "2026-03-11T07:00:00Z"
+  "success": true,
+  "agent": {
+    "uid": "KA-abc123xyz",
+    "name": "payment-bot-001",
+    "wallet_address": "0x1234...abcd",
+    "status": "active"
+  }
 }
 ```
 
-### 2. Agent Requests Payment
+### 3. Get Supported Chains & Tokens
 
 ```bash
-# Agent requests payment link
-curl -X POST https://api.your-middleware.com/v1/payments/create-link \
-  -H "Authorization: Bearer AGENT_UID" \
+# List supported chains
+curl http://localhost:3000/v1/chains
+
+# Get tokens for a chain (e.g., Base = 8453)
+curl http://localhost:3000/v1/chains/tokens/8453
+```
+
+### 4. Create Payment Link
+
+```bash
+curl -X POST http://localhost:3000/v1/payments/create-link \
   -H "Content-Type: application/json" \
+  -H "X-Agent-UID: KA-abc123xyz" \
   -d '{
-    "amount": 1000,
-    "currency": "USD",
+    "amount": 100,
     "description": "Payment for Order #12345",
-    "agent_reference": "order-12345"
+    "reference": "order-12345",
+    "tokenOut": {
+      "chainId": "8453",
+      "address": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+    }
   }'
 ```
 
-### 3. Middleware Routes to KIRAPAY
-
-The middleware:
-- Adds the agent's UID to your DB record
-- Calls KIRAPAY using **your** API key
-- Returns payment link to agent
-
----
+**Response:**
+```json
+{
+  "success": true,
+  "payment": {
+    "id": "klp_xyz789",
+    "link": "https://checkout.kira-pay.com/xyz789",
+    "amount": 100,
+    "status": "pending"
+  }
+}
+```
 
 ## Architecture
 
 ```
 ┌─────────────┐     ┌──────────────────┐     ┌─────────────┐     ┌─────────────┐
-│   AI Agent  │────▶│   Middleware     │────▶│   KIRAPAY   │────▶│   Payout    │
-│  (Your App) │     │  (This Engine)   │     │   (Your Key)│     │  (Wallet)   │
+│   AI Agent  │────▶│   Middleware     │────▶│   KIRAPAY   │────▶│   Wallet    │
+│  (Your App) │     │  (This Engine)   │     │  (Your Key) │     │ (Agent's)   │
 └─────────────┘     └──────────────────┘     └─────────────┘     └─────────────┘
-                           │
-                           ▼
-                    ┌─────────────┐
-                    │  Your DB    │
-                    │  (Tracks    │
-                    │   Agents)   │
-                    └─────────────┘
+                          │
+                          ▼
+                   ┌─────────────┐
+                   │  Your DB    │
+                   │  (Tracks    │
+                   │   Agents)   │
+                   └─────────────┘
 ```
 
-**Agent View:** Simple API - register, request payments  
-**KIRAPAY View:** Just your enterprise account  
-**Your View:** Full agent activity tracking
+## Supported Chains
 
-## Why This Works
+| Chain ID | Name | Type |
+|----------|------|------|
+| 1 | Ethereum | EVM |
+| 137 | Polygon | EVM |
+| 8453 | Base | EVM |
+| 56 | BNB Chain | EVM |
+| 43114 | Avalanche | EVM |
+| sol | Solana | SOL |
+| btc | Bitcoin | BTC |
 
-| Challenge | Solution |
-|-----------|----------|
-| KIRAPAY needs email verification | All requests via your verified API key |
-| Can't distinguish agent payments | Track in your DB by agent UID |
-| Agent autonomy | Agents can self-register, get UID, request payments |
-| Settlement | Payments go to agent's registered wallet |
+## Environment Variables
 
-## What's Included
+```bash
+# Required
+KIRAPAY_API_KEY=your_kirapay_api_key
 
-- [Architecture](./ARCHITECTURE.md) - System design
-- [Requirements](./REQUIREMENTS.md) - What this middleware needs
-- [Agent Flow](./AGENT-FLOW.md) - How agents integrate
-- [API Spec](./API-SPEC.md) - Endpoints reference
+# Optional
+PORT=3000
+DATABASE_PATH=./data/kirapay.db
+KIRAPAY_BASE_URL=https://api.kira-pay.com
+```
 
 ## License
 
