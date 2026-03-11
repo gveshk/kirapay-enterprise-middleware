@@ -3,11 +3,12 @@
 ## Base URL
 
 ```
-Production: https://api.kirapay.com
-Sandbox:    https://api-sandbox.kirapay.com
+Production: https://api.your-middleware.com
 ```
 
 ## Authentication
+
+This middleware uses simple UID-based auth for agents.
 
 ### Register Agent
 ```
@@ -18,80 +19,64 @@ POST /v1/agents/register
 ```json
 {
   "name": "string (required)",
-  "description": "string",
-  "contact_email": "string (required)",
-  "webhook_url": "string",
-  "scopes": ["payments:write", "accounts:read"]
+  "use_case": "string (optional)",
+  "wallet_address": "string (required)"
 }
 ```
 
 **Response:**
 ```json
 {
-  "agent_id": "agn_xxx",
-  "api_key": "kp_live_xxx",
-  "api_secret": "ks_live_xxx",
-  "status": "active",
-  "created_at": "2026-03-11T07:00:00Z"
+  "success": true,
+  "agent": {
+    "uid": "KA-abc123xyz",
+    "name": "merchant-payout-bot",
+    "wallet_address": "0x742d...",
+    "use_case": "automated settlements",
+    "status": "active",
+    "created_at": "2026-03-11T07:00:00Z"
+  }
 }
 ```
 
 ---
 
-### Get JWT Token
+### List Agents
 ```
-POST /v1/auth/token
-```
-
-**Request:**
-```json
-{
-  "api_key": "string (required)",
-  "api_secret": "string (required)",
-  "expires_in": 3600
-}
+GET /v1/agents
 ```
 
 **Response:**
 ```json
 {
-  "access_token": "eyJxxx",
-  "token_type": "Bearer",
-  "expires_in": 3600
+  "success": true,
+  "agents": [
+    {
+      "uid": "KA-abc123xyz",
+      "name": "merchant-payout-bot",
+      "wallet_address": "0x742d...",
+      "status": "active",
+      "created_at": "2026-03-11T07:00:00Z"
+    }
+  ]
 }
 ```
 
----
-
-## Accounts
-
-### Get Balance
+### Get Agent
 ```
-GET /v1/accounts/balance
-```
-
-**Response:**
-```json
-{
-  "account_id": "acc_xxx",
-  "available": 50000.00,
-  "pending": 2500.00,
-  "currency": "USD"
-}
-```
-
-### Get Account Details
-```
-GET /v1/accounts/{account_id}
+GET /v1/agents/:uid
 ```
 
 ---
 
 ## Payments
 
-### Initiate Payment
+All payment requests use the `X-Agent-UID` header.
+
+### Create Payment Link
 ```
-POST /v1/payments/initiate
+POST /v1/payments/create-link
+Headers: X-Agent-UID: KA-abc123xyz
 ```
 
 **Request:**
@@ -99,67 +84,83 @@ POST /v1/payments/initiate
 {
   "amount": 1000.00,
   "currency": "USD",
-  "recipient": {
-    "type": "merchant|wallet|bank",
-    "id": "string"
-  },
-  "reference": "ORDER-12345",
-  "description": "string",
-  "metadata": {}
+  "description": "Payment for Order #12345",
+  "reference": "order-12345"
 }
 ```
 
 **Response:**
 ```json
 {
-  "payment_id": "pay_xxx",
-  "status": "pending|completed|failed",
-  "amount": 1000.00,
-  "currency": "USD",
-  "created_at": "2026-03-11T07:00:00Z"
+  "success": true,
+  "payment": {
+    "id": "klp_xyz789",
+    "link": "https://pay.kira-pay.com/xyz789",
+    "amount": 1000.00,
+    "currency": "USD",
+    "status": "pending",
+    "created_at": "2026-03-11T07:00:00Z"
+  }
 }
 ```
 
 ### Get Payment Status
 ```
-GET /v1/payments/{payment_id}
+GET /v1/payments/:payment_id
+Headers: X-Agent-UID: KA-abc123xyz
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "payment": {
+    "id": "klp_xyz789",
+    "amount": 1000.00,
+    "currency": "USD",
+    "status": "completed",
+    "created_at": "2026-03-11T07:00:00Z"
+  }
+}
 ```
 
 ### Cancel Payment
 ```
-POST /v1/payments/{payment_id}/cancel
+POST /v1/payments/:payment_id/cancel
+Headers: X-Agent-UID: KA-abc123xyz
 ```
 
 ---
 
-## Refunds
+## Transactions
 
-### Initiate Refund
+### List All Transactions
 ```
-POST /v1/refunds
+GET /v1/transactions
 ```
 
-**Request:**
+**Response:**
 ```json
 {
-  "payment_id": "pay_xxx",
-  "amount": 500.00,
-  "reason": "customer_request"
+  "success": true,
+  "transactions": [
+    {
+      "id": "txn_abc123",
+      "agent_uid": "KA-abc123xyz",
+      "kirapay_payment_id": "klp_xyz789",
+      "amount": 1000.00,
+      "currency": "USD",
+      "status": "completed",
+      "description": "Payment for Order #12345",
+      "created_at": "2026-03-11T07:00:00Z"
+    }
+  ]
 }
 ```
 
----
-
-## Merchants
-
-### List Merchants
+### Filter by Agent
 ```
-GET /v1/merchants
-```
-
-### Get Merchant
-```
-GET /v1/merchants/{merchant_id}
+GET /v1/transactions?agent_uid=KA-abc123xyz
 ```
 
 ---
@@ -169,66 +170,30 @@ GET /v1/merchants/{merchant_id}
 ### Register Webhook
 ```
 POST /v1/webhooks
+Headers: X-Agent-UID: KA-abc123xyz
 ```
 
 **Request:**
 ```json
 {
-  "url": "https://your-site.com/webhooks",
-  "events": ["payment.completed", "payment.failed"],
-  "secret": "your-webhook-secret"
+  "url": "https://your-agent.com/webhook",
+  "events": ["payment.completed", "payment.failed"]
 }
 ```
 
-### List Webhooks
-```
-GET /v1/webhooks
-```
+### Webhook Payload (forwarded to agent)
 
-### Delete Webhook
-```
-DELETE /v1/webhooks/{webhook_id}
-```
-
----
-
-## Usage & Limits
-
-### Get Usage Stats
-```
-GET /v1/usage
-```
-
-**Response:**
 ```json
 {
-  "period": "2026-03",
-  "requests": {
-    "total": 10000,
-    "remaining": 90000
-  },
-  "payments": {
-    "total": 500,
-    "volume": 500000.00
+  "event": "payment.completed",
+  "agent_uid": "KA-abc123xyz",
+  "payment": {
+    "id": "klp_xyz789",
+    "amount": 1000.00,
+    "status": "completed"
   }
 }
 ```
-
----
-
-## Audit
-
-### Query Audit Logs
-```
-GET /v1/audit/logs
-```
-
-**Query Params:**
-- `agent_id`
-- `payment_id`
-- `from` (ISO date)
-- `to` (ISO date)
-- `limit` (max 100)
 
 ---
 
@@ -237,19 +202,17 @@ GET /v1/audit/logs
 | Status | Error | Description |
 |--------|-------|-------------|
 | 400 | invalid_request | Malformed request |
-| 401 | unauthorized | Invalid/missing auth |
-| 403 | forbidden | Insufficient permissions |
-| 404 | not_found | Resource doesn't exist |
-| 429 | rate_limited | Too many requests |
-| 500 | server_error | Internal error |
+| 401 | unauthorized | Missing or invalid X-Agent-UID |
+| 404 | not_found | Agent or payment not found |
+| 500 | server_error | KIRAPAY API error |
 
 **Error Format:**
 ```json
 {
+  "success": false,
   "error": {
     "code": "invalid_request",
-    "message": "Amount must be positive",
-    "param": "amount"
+    "message": "Amount must be positive"
   }
 }
 ```

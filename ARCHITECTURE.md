@@ -1,128 +1,155 @@
 # Architecture - KIRAPAY Enterprise Middleware
 
-## System Overview
+## Core Concept
+
+**The middleware sits between agents and your KIRAPAY API key:**
+
+1. Agents register → get a UID
+2. Agents make requests → middleware adds UID tracking
+3. Middleware calls KIRAPAY → uses YOUR API key
+4. Your DB tracks everything → agent wallet, payment history
+
+---
+
+## System Flow
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        AI Agents                                │
-│   (Autonomous agents, AI workflows, Enterprise systems)         │
-└────────────────────────────┬────────────────────────────────────┘
-                             │ HTTPS + Auth
+┌──────────────────────────────────────────────────────────────────┐
+│                           Agent                                   │
+│   - Has UID (e.g., KA-abc123)                                    │
+│   - Calls middleware for payments                                │
+└────────────────────────────┬─────────────────────────────────────┘
+                             │ 1. Request with UID
                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      Agent Gateway                               │
-│  ┌─────────────┐  ┌──────────────┐  ┌───────────────────────┐  │
-│  │   Rate      │  │    Auth      │  │    Request           │  │
-│  │   Limiter   │  │    Validator │  │    Router            │  │
-│  └─────────────┘  └──────────────┘  └───────────────────────┘  │
-└────────────────────────────┬────────────────────────────────────┘
-                             │
+┌──────────────────────────────────────────────────────────────────┐
+│                    Middleware API                                │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
+│  │ Agent         │  │ Request       │  │ Payment              │  │
+│  │ Validator     │─▶│ Transformer  │─▶│ Router               │  │
+│  └──────────────┘  └──────────────┘  └──────────────────────┘  │
+│                                                                  │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
+│  │ Agent DB     │  │ Activity     │  │ Webhook              │  │
+│  │ (UID→Wallet) │  │ Logger       │  │ Dispatcher           │  │
+│  └──────────────┘  └──────────────┘  └──────────────────────┘  │
+└────────────────────────────┬─────────────────────────────────────┘
+                             │ 2. Your KIRAPAY API Key
                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    Core Services                                 │
-│  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌──────────┐  │
-│  │  Payment   │  │  Account   │  │  Merchant  │  │  Webhook │  │
-│  │  Service   │  │  Service   │  │  Service   │  │  Service │  │
-│  └────────────┘  └────────────┘  └────────────┘  └──────────┘  │
-└────────────────────────────┬────────────────────────────────────┘
-                             │
-                             ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      KIRAPAY Core                                │
-│              (Existing payment infrastructure)                  │
-└─────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│                      KIRAPAY API                                 │
+│                   (docs.kira-pay.com)                           │
+│                                                                  │
+│  - Payment link generation                                      │
+│  - Transaction status                                           │
+│  - Settlement                                                   │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
-## Core Components
+---
 
-### 1. Agent Gateway
-- **Purpose**: Single entry point for all agent traffic
-- **Features**: 
-  - TLS termination
-  - Request validation
-  - Metrics & monitoring
-  - DDoS protection
+## Components
 
-### 2. Authentication Layer
-- **API Key Auth**: Per-agent unique keys
-- **OAuth2 Flow**: For enterprise integrations
-- **JWT Tokens**: Short-lived access tokens
-- **Scopes**: Fine-grained permissions (read, write, admin)
+### 1. Agent Registry
+- Register agents with: name, use_case, wallet_address
+- Generate unique UID (format: `KA-<random>`)
+- Store mapping: UID → wallet, name, created_at
 
-### 3. Rate Limiter
-- **Per-Agent Limits**: Configurable quotas
-- **Burst Handling**: Token bucket algorithm
-- **Priority Queues**: VIP agents get priority
-- **Usage Tracking**: Real-time monitoring
+### 2. Request Transformer
+- Takes agent request + UID
+- Maps to KIRAPAY API format
+- Adds internal reference for tracking
 
-### 4. Payment Engine
-- **Operations**: 
-  - Balance queries
-  - Payment initiation
-  - Payment confirmation
-  - Refunds & reversals
-  - Recurring payments
-- **Idempotency**: Duplicate request handling
+### 3. Payment Router
+- Calls KIRAPAY with YOUR API key
+- Handles all payment types:
+  - Payment link generation
+  - Status checks
+  - Refunds
 
-### 5. Webhook Dispatcher
-- **Async Events**: Payment status updates
-- **Retry Logic**: Exponential backoff
-- **Event Types**:
-  - `payment.completed`
-  - `payment.failed`
-  - `account.updated`
-  - `merchant.verified`
+### 4. Agent Database (Your DB)
+- **Table: agents**
+  - `uid` (PRIMARY KEY)
+  - `name`
+  - `wallet_address`
+  - `use_case`
+  - `created_at`
+  - `status`
 
-### 6. Audit Logger
-- **Full Trail**: Every request logged
-- **Compliance**: SOC2, PCI-DSS ready
-- **Retention**: Configurable policies
-- **Query API**: Search & analytics
+- **Table: transactions**
+  - `transaction_id`
+  - `agent_uid` (FK)
+  - `amount`
+  - `currency`
+  - `status`
+  - `kirapay_response`
+  - `created_at`
 
-## Data Flow
+### 5. Activity Logger
+- Every request logged
+- Track: which agent, what operation, result
+- Searchable for debugging
 
-### Agent Payment Flow
+### 6. Webhook Dispatcher
+- Forward KIRAPAY webhooks to agents
+- Include agent UID in payload
+
+---
+
+## Data Flow Examples
+
+### Agent Registration
 ```
-1. Agent → POST /v1/payments/initiate
-2. Gateway → Validate API key
-3. Gateway → Check rate limits
-4. Payment Service → Create payment record
-5. Payment Service → Process with KIRAPAY Core
-6. Payment Service → Update status
-7. Gateway → Return response to agent
-8. Webhook Dispatch → Async notification (if webhook registered)
+Agent → POST /agents/register → Middleware
+                               → Generate UID: KA-xyz789
+                               → Store in DB
+                               → Return UID to Agent
 ```
 
-### Authentication Flow
+### Payment Link Request
 ```
-1. Agent → Register at /v1/agents/register
-2. System → Generate API key + secret
-3. Agent → Include in requests (Authorization: Bearer <key>)
-4. Gateway → Validate, issue JWT
-5. Agent → Use JWT for subsequent requests
+Agent → POST /payments/create-link
+       + Header: X-Agent-UID: KA-xyz789
+       + Body: { amount, currency, description }
+
+Middleware:
+  1. Validate UID exists
+  2. Log activity
+  3. Call KIRAPAY with YOUR API key
+  4. Store transaction with agent_uid
+  5. Return payment link to agent
 ```
+
+### Tracking
+```
+Your DB knows:
+- Agent KA-xyz789 requested $1000 payment
+- Status: completed
+- Settlement: to wallet 0x1234...
+```
+
+---
 
 ## Security
 
-- **Encryption**: TLS 1.3 everywhere
-- **API Keys**: AES-256 encrypted at rest
-- **IP Whitelisting**: Optional per agent
-- **Mutual TLS**: For high-security integrations
+- **API Key**: Only your backend holds the KIRAPAY key
+- **Agent Auth**: Simple UID header (for internal agents)
+- **Rate Limiting**: Per-agent limits optional
 - **Input Validation**: Strict schema validation
-- **SQL Injection**: Parameterized queries only
+- **Logging**: Full audit trail
 
-## Scalability
+---
 
-- **Horizontal Scaling**: Stateless gateway
-- **Database**: Sharded for performance
-- **Caching**: Redis for hot data
-- **CDN**: For static assets
-- **Load Balancing**: Round-robin + health checks
+## What's NOT Included (v1)
+
+- Complex permission models (keep it simple)
+- Multiple API keys (single enterprise key)
+- Agent-to-agent transfers
+- Crypto conversions
+
+---
 
 ## Deployment
 
-- **Container**: Docker + Kubernetes
-- **Regions**: Multi-region ready
-- **CI/CD**: Automated deployments
-- **Health Checks**: Liveness + readiness probes
-- **Metrics**: Prometheus + Grafana
+- **Simple**: Node.js/Python backend
+- **Database**: PostgreSQL/MySQL
+- **Hosting**: Your infrastructure or cloud

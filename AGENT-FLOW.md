@@ -1,294 +1,245 @@
 # Agent Integration Flow - KIRAPAY Enterprise Middleware
 
-## How Agents Access KIRAPAY
+## How It Works
 
-This document describes the end-to-end flow for AI agents to integrate with KIRAPAY through the enterprise middleware.
-
----
-
-## Flow Diagram
-
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Agent     │     │   Gateway   │     │   Auth      │     │   KIRAPAY   │
-│  (AI Bot)   │────▶│   (API)     │────▶│   Service   │────▶│   Core      │
-└─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
-       │                   │                   │                    │
-       │ 1. Request        │ 2. Validate      │ 3. Verify          │
-       │ 2. Response◀──────│ 3. Route ◀────────│ 4. Token ◀─────────
-       │                   │                   │                    │
-       │              ┌────┴────┐         ┌────┴────┐
-       │              │ Rate    │         │ Webhook │
-       │              │ Limiter │         │ Dispatch│
-       │              └─────────┘         └─────────┘
-```
+This middleware lets AI agents make payments through KIRAPAY using **your** enterprise API key, while you track each agent's activity.
 
 ---
 
-## Step-by-Step Flow
+## The Flow
 
-### Step 1: Agent Registration
+```
+┌─────────────┐     ┌─────────────────┐     ┌─────────────┐     ┌──────────┐
+│   Agent     │────▶│   Middleware   │────▶│   KIRAPAY  │────▶│ Wallet   │
+│ (Autonomous)│     │ (Your Engine)  │     │ (Your Key) │     │ (Agent's)│
+└─────────────┘     └─────────────────┘     └─────────────┘     └──────────┘
+                          │
+                          ▼
+                   ┌─────────────┐
+                   │  Your DB    │
+                   │  Tracks:    │
+                   │  - Agent UID│
+                   │  - Wallet   │
+                   │  - Payments │
+                   └─────────────┘
+```
 
-Before making any API calls, agents must register:
+---
 
+## Step 1: Agent Registration
+
+**Agent sends:**
 ```bash
-curl -X POST https://api.kirapay.com/v1/agents/register \
+curl -X POST https://api.your-middleware.com/v1/agents/register \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "payment-agent-001",
-    "description": "Automates merchant payouts",
-    "contact_email": "agent@company.com",
-    "webhook_url": "https://agent.company.com/webhooks/kirapay",
-    "scopes": ["payments:write", "accounts:read"]
+    "name": "merchant-payout-bot",
+    "use_case": "automated settlements for merchants",
+    "wallet_address": "0x742d35Cc6634C0532925a3b844Bc9e7595f6eB12"
   }'
 ```
 
-**Response:**
+**Middleware does:**
+1. Validates required fields
+2. Generates UID: `KA-abc123xyz`
+3. Stores in DB with wallet mapping
+
+**Response to Agent:**
 ```json
 {
-  "agent_id": "agn_abc123xyz",
-  "api_key": "kp_live_abc123...",
-  "api_secret": "ks_live_xyz789...",
-  "status": "active",
-  "created_at": "2026-03-11T07:00:00Z"
-}
-```
-
-⚠️ **Important**: Store `api_key` and `api_secret` securely!
-
----
-
-### Step 2: Authentication
-
-Agents can authenticate using either:
-
-#### Option A: API Key (Simple)
-```bash
-curl https://api.kirapay.com/v1/accounts/balance \
-  -H "Authorization: Bearer kp_live_abc123..."
-```
-
-#### Option B: JWT Token (Recommended for high frequency)
-
-1. Exchange API key for JWT:
-```bash
-curl -X POST https://api.kirapay.com/v1/auth/token \
-  -H "Content-Type: application/json" \
-  -d '{
-    "api_key": "kp_live_abc123...",
-    "api_secret": "ks_live_xyz789...",
-    "expires_in": 3600
-  }'
-```
-
-**Response:**
-```json
-{
-  "access_token": "eyJhbGciOiJIUzI1NiIs...",
-  "token_type": "Bearer",
-  "expires_in": 3600
-}
-```
-
-2. Use JWT for requests:
-```bash
-curl https://api.kirapay.com/v1/accounts/balance \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIs..."
-```
-
----
-
-### Step 3: Making API Calls
-
-#### Check Balance
-```bash
-curl https://api.kirapay.com/v1/accounts/balance \
-  -H "Authorization: Bearer <token>"
-```
-
-**Response:**
-```json
-{
-  "account_id": "acc_123",
-  "available": 50000.00,
-  "pending": 2500.00,
-  "currency": "USD"
-}
-```
-
-#### Initiate Payment
-```bash
-curl -X POST https://api.kirapay.com/v1/payments/initiate \
-  -H "Authorization: Bearer <token>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "amount": 1000.00,
-    "currency": "USD",
-    "recipient": {
-      "type": "merchant",
-      "id": "mer_456"
-    },
-    "reference": "ORDER-12345",
-    "description": "Payment for Order #12345"
-  }'
-```
-
-**Response:**
-```json
-{
-  "payment_id": "pay_789",
-  "status": "pending",
-  "amount": 1000.00,
-  "created_at": "2026-03-11T07:05:00Z"
-}
-```
-
----
-
-### Step 4: Webhook Notifications
-
-For async events, agents receive webhooks:
-
-**Webhook Payload:**
-```json
-{
-  "event": "payment.completed",
-  "payment_id": "pay_789",
-  "timestamp": "2026-03-11T07:06:00Z",
-  "data": {
-    "status": "completed",
-    "amount": 1000.00,
-    "settled_to": "mer_456"
+  "success": true,
+  "agent": {
+    "uid": "KA-abc123xyz",
+    "name": "merchant-payout-bot",
+    "wallet_address": "0x742d...6eB12",
+    "status": "active"
   }
 }
 ```
 
-**Verify Webhook Signature:**
-```python
-import hmac
-import hashlib
-
-def verify_webhook(payload, signature, secret):
-    expected = hmac.new(
-        secret.encode(),
-        payload.encode(),
-        hashlib.sha256
-    ).hexdigest()
-    return hmac.compare_digest(signature, expected)
-```
+**What you track in DB:**
+| uid | name | wallet | created_at |
+|-----|------|--------|------------|
+| KA-abc123xyz | merchant-payout-bot | 0x742d... | 2026-03-11 |
 
 ---
 
-### Step 5: Idempotency
+## Step 2: Agent Requests Payment
 
-For payment operations, use idempotency keys to prevent duplicates:
-
+**Agent sends:**
 ```bash
-curl -X POST https://api.kirapay.com/v1/payments/initiate \
-  -H "Authorization: Bearer <token>" \
-  -H "Idempotency-Key: unique-request-id-12345" \
-  -d '{...}'
+curl -X POST https://api.your-middleware.com/v1/payments/create-link \
+  -H "X-Agent-UID: KA-abc123xyz" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 1000,
+    "currency": "USD",
+    "description": "Settlement for Order #12345",
+    "reference": "order-12345"
+  }'
 ```
 
-If the same key is used within 24 hours, the original response is returned.
+**Middleware does:**
+1. Validate UID exists
+2. Log activity
+3. Call KIRAPAY API (using YOUR key)
+4. Store transaction with agent_uid
+5. Return payment link
+
+**To KIRAPAY (from your server):**
+```bash
+curl -X POST https://api.kira-pay.com/v1/payment-links \
+  -H "Authorization: Bearer YOUR_KIRAPAY_API_KEY" \
+  -d '{
+    "amount": 1000,
+    "currency": "USD",
+    "description": "Settlement for Order #12345"
+  }'
+```
+
+**KIRAPAY sees:** Just your enterprise account making the request
+
+**Your DB tracks:**
+| agent_uid | amount | kirapay_id | status |
+|-----------|--------|------------|--------|
+| KA-abc123xyz | 1000 | klp_xyz789 | pending |
 
 ---
 
-## Code Examples
+## Step 3: Agent Receives Payment Link
 
-### Python
+**Response to Agent:**
+```json
+{
+  "success": true,
+  "payment": {
+    "id": "klp_xyz789",
+    "link": "https://pay.kira-pay.com/xyz789",
+    "amount": 1000,
+    "currency": "USD",
+    "status": "pending"
+  }
+}
+```
+
+---
+
+## Step 4: Payment Completion (Webhook)
+
+When KIRAPAY notifies of payment completion:
+
+1. **KIRAPAY → Your Webhook:**
+```json
+{
+  "event": "payment.completed",
+  "payment_id": "klp_xyz789",
+  "amount": 1000
+}
+```
+
+2. **Middleware updates DB:**
+```sql
+UPDATE transactions 
+SET status = 'completed' 
+WHERE kirapay_payment_id = 'klp_xyz789'
+```
+
+3. **Forward to agent (if webhook registered):**
+```json
+{
+  "event": "payment.completed",
+  "agent_uid": "KA-abc123xyz",
+  "payment_id": "klp_xyz789",
+  "amount": 1000,
+  "status": "completed"
+}
+```
+
+---
+
+## Code Example: Python Agent
+
 ```python
 import requests
 
 class KirapayAgent:
-    def __init__(self, api_key, api_secret, base_url="https://api.kirapay.com"):
-        self.base_url = base_url
-        self.api_key = api_key
-        self.api_secret = api_secret
-        self.token = None
+    def __init__(self, agent_uid, middleware_url):
+        self.agent_uid = agent_uid
+        self.url = middleware_url
     
-    def authenticate(self):
-        resp = requests.post(f"{self.base_url}/v1/auth/token", json={
-            "api_key": self.api_key,
-            "api_secret": self.api_secret
+    def register(self, name, wallet, use_case=None):
+        resp = requests.post(f"{self.url}/v1/agents/register", json={
+            "name": name,
+            "wallet_address": wallet,
+            "use_case": use_case
         })
-        self.token = resp.json()["access_token"]
+        data = resp.json()
+        if data.get("success"):
+            self.agent_uid = data["agent"]["uid"]
+        return data
     
-    def get_balance(self):
-        if not self.token:
-            self.authenticate()
-        resp = requests.get(
-            f"{self.base_url}/v1/accounts/balance",
-            headers={"Authorization": f"Bearer {self.token}"}
-        )
-        return resp.json()
-    
-    def initiate_payment(self, amount, recipient_id, reference):
-        if not self.token:
-            self.authenticate()
-        return requests.post(
-            f"{self.base_url}/v1/payments/initiate",
-            headers={"Authorization": f"Bearer {self.token}"},
+    def create_payment_link(self, amount, description, reference=None):
+        resp = requests.post(
+            f"{self.url}/v1/payments/create-link",
+            headers={"X-Agent-UID": self.agent_uid},
             json={
                 "amount": amount,
                 "currency": "USD",
-                "recipient": {"type": "merchant", "id": recipient_id},
+                "description": description,
                 "reference": reference
             }
-        ).json()
+        )
+        return resp.json()
+
+# Usage
+agent = KirapayAgent(
+    agent_uid="KA-abc123xyz",  # Or None if not registered yet
+    middleware_url="https://api.your-middleware.com"
+)
+
+# If new agent
+agent.register(
+    name="payout-bot",
+    wallet="0x742d35Cc6634C0532925a3b844Bc9e7595f6eB12",
+    use_case="merchant settlements"
+)
+
+# Request payment
+result = agent.create_payment_link(
+    amount=1000,
+    description="Payment for Order #12345",
+    reference="order-12345"
+)
+
+print(result["payment"]["link"])  # Payment link to send to user
 ```
 
-### Node.js
-```javascript
-class KirapayAgent {
-  constructor(apiKey, apiSecret) {
-    this.apiKey = apiKey;
-    this.apiSecret = apiSecret;
-    this.baseUrl = 'https://api.kirapay.com';
-    this.token = null;
-  }
+---
 
-  async authenticate() {
-    const resp = await fetch(`${this.baseUrl}/v1/auth/token`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        api_key: this.apiKey,
-        api_secret: this.apiSecret
-      })
-    });
-    const data = await resp.json();
-    this.token = data.access_token;
-  }
+## What's Tracked
 
-  async getBalance() {
-    if (!this.token) await this.authenticate();
-    const resp = await fetch(`${this.baseUrl}/v1/accounts/balance`, {
-      headers: { Authorization: `Bearer ${this.token}` }
-    });
-    return resp.json();
-  }
-}
-```
+| What KIRAPAY Sees | What You Track |
+|-------------------|----------------|
+| Your API key | Agent UID |
+| Payment amount | Agent wallet |
+| Payment status | Agent name |
+| Timestamp | Full transaction history |
 
 ---
 
 ## Error Handling
 
-| Code | Meaning | Action |
-|------|---------|--------|
-| 401 | Invalid token | Re-authenticate |
-| 403 | Insufficient scope | Request more permissions |
-| 429 | Rate limited | Wait & retry with backoff |
-| 500 | Server error | Retry with idempotency key |
+| Error | Cause | Action |
+|-------|-------|--------|
+| 404 | Invalid UID | Agent must register first |
+| 400 | Invalid amount | Check input format |
+| 500 | KIRAPAY error | Retry with backoff |
 
 ---
 
 ## Best Practices
 
-1. **Use JWT**: For high-frequency requests, exchange API key for JWT
-2. **Idempotency**: Always use idempotency keys for payments
-3. **Webhooks**: Verify signatures before processing
-4. **Retry**: Implement exponential backoff for failures
-5. **Monitor**: Track rate limit usage via `/v1/usage`
-6. **Secure**: Never log or expose API secrets
+1. **Store UID securely** - Agents need it for every request
+2. **Verify wallet** - Confirm before first payment
+3. **Use webhooks** - Track payment completion
+4. **Log everything** - Full audit trail
