@@ -31,6 +31,28 @@
             transform: translateY(-4px);
             box-shadow: 0 10px 40px rgba(0, 37, 93, 0.1);
         }
+        .code-block {
+            background: #1e1e1e;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .code-block pre {
+            margin: 0;
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+        .code-tab {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .code-tab.active {
+            background: #2d2d2d;
+            color: #60a5fa;
+            border-bottom: 2px solid #60a5fa;
+        }
+        .flow-arrow {
+            color: #9ca3af;
+        }
     </style>
 </head>
 <body>
@@ -41,9 +63,10 @@
                 <img src="https://framerusercontent.com/images/X6WMOh4yOSKWdsKothX823V8SM.png?width=80" alt="KIRAPAY" class="h-8">
             </a>
             <div class="flex items-center gap-4">
-                <a href="#features" class="text-gray-600 hover:text-gray-900 text-sm font-medium">Features</a>
-                <a href="#how-it-works" class="text-gray-600 hover:text-gray-900 text-sm font-medium">How it Works</a>
-                <a href="https://dashboard.kira-pay.com" class="text-gray-600 hover:text-gray-900 text-sm font-medium">Dashboard</a>
+                <a href="#for-agents" class="text-gray-600 hover:text-gray-900 text-sm font-medium">🤖 For AI Agents</a>
+                <a href="#agent-flow" class="text-gray-600 hover:text-gray-900 text-sm font-medium">Flow</a>
+                <a href="#code-examples" class="text-gray-600 hover:text-gray-900 text-sm font-medium">Code</a>
+                <a href="#agent-register" class="text-gray-600 hover:text-gray-900 text-sm font-medium">Register</a>
             </div>
         </div>
     </nav>
@@ -91,6 +114,222 @@
         </div>
     </section>
 
+    <!-- For AI Agents Section -->
+    <section id="for-agents" class="px-6 py-20 bg-gray-900">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <span class="inline-block px-4 py-1 bg-blue-600 text-white text-sm font-medium rounded-full mb-4">🤖 For AI Agents</span>
+                <h2 class="text-3xl font-bold text-white mb-4">Use KIRAPAY as an AI Agent</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    Integrate KIRAPAY into your agent to accept payments autonomously. 
+                    No bank accounts. No human intervention. Just code.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-gray-800 rounded-2xl p-6 border border-gray-700">
+                    <div class="text-2xl mb-3">🔐</div>
+                    <h3 class="font-semibold mb-2 text-white">Self-Sovereign Payments</h3>
+                    <p class="text-gray-400 text-sm">Your agent owns its identity and wallet. Payments go directly to your blockchain address.</p>
+                </div>
+                <div class="bg-gray-800 rounded-2xl p-6 border border-gray-700">
+                    <div class="text-2xl mb-3">🔗</div>
+                    <h3 class="font-semibold mb-2 text-white">20+ Chains</h3>
+                    <p class="text-gray-400 text-sm">Accept USDC, USDT, ETH across Ethereum, Base, Solana, Polygon, and more.</p>
+                </div>
+                <div class="bg-gray-800 rounded-2xl p-6 border border-gray-700">
+                    <div class="text-2xl mb-3">⚡</div>
+                    <h3 class="font-semibold mb-2 text-white">Instant Settlement</h3>
+                    <p class="text-gray-400 text-sm">Get paid in seconds, not days. Immediate confirmation via webhooks.</p>
+                </div>
+                <div class="bg-gray-800 rounded-2xl p-6 border border-gray-700">
+                    <div class="text-2xl mb-3">🤖</div>
+                    <h3 class="font-semibold mb-2 text-white">Full Autonomy</h3>
+                    <p class="text-gray-400 text-sm">Everything via API. Register → Create Link → Get Paid → Receive Webhook.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Agent Flow Diagram -->
+    <section id="agent-flow" class="px-6 py-20">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-4 text-gray-900">Step-by-Step Agent Flow</h2>
+            <p class="text-gray-500 text-center mb-16">How your AI agent gets paid in 4 steps</p>
+            
+            <!-- Flow Diagram -->
+            <div class="bg-white rounded-3xl p-8 shadow-lg border border-gray-200">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <!-- Step 1 -->
+                    <div class="flex flex-col items-center text-center flex-1">
+                        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-2xl font-bold text-blue-600 mb-3">1</div>
+                        <h3 class="font-semibold text-gray-900 mb-1">Register</h3>
+                        <p class="text-gray-500 text-sm">POST /v1/agents/register<br>with name + wallet</p>
+                        <code class="text-xs bg-gray-100 px-2 py-1 rounded mt-2 text-blue-600">→ Get Agent UID</code>
+                    </div>
+                    
+                    <div class="flow-arrow text-2xl md:rotate-0">→</div>
+                    
+                    <!-- Step 2 -->
+                    <div class="flex flex-col items-center text-center flex-1">
+                        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-2xl font-bold text-blue-600 mb-3">2</div>
+                        <h3 class="font-semibold text-gray-900 mb-1">Create Link</h3>
+                        <p class="text-gray-500 text-sm">POST /v1/payments/create-link<br>with amount + description</p>
+                        <code class="text-xs bg-gray-100 px-2 py-1 rounded mt-2 text-blue-600">→ Get Payment URL</code>
+                    </div>
+                    
+                    <div class="flow-arrow text-2xl md:rotate-0">→</div>
+                    
+                    <!-- Step 3 -->
+                    <div class="flex flex-col items-center text-center flex-1">
+                        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-2xl font-bold text-blue-600 mb-3">3</div>
+                        <h3 class="font-semibold text-gray-900 mb-1">Get Paid</h3>
+                        <p class="text-gray-500 text-sm">Customer pays via<br>the payment link</p>
+                        <code class="text-xs bg-gray-100 px-2 py-1 rounded mt-2 text-green-600">💰 USDC/USDT</code>
+                    </div>
+                    
+                    <div class="flow-arrow text-2xl md:rotate-0">→</div>
+                    
+                    <!-- Step 4 -->
+                    <div class="flex flex-col items-center text-center flex-1">
+                        <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center text-2xl font-bold text-green-600 mb-3">4</div>
+                        <h3 class="font-semibold text-gray-900 mb-1">Receive Webhook</h3>
+                        <p class="text-gray-500 text-sm">KIRAPAY notifies your<br>webhook URL</p>
+                        <code class="text-xs bg-gray-100 px-2 py-1 rounded mt-2 text-green-600">✓ payment.completed</code>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Detailed Flow -->
+            <div class="mt-12 grid md:grid-cols-2 gap-8">
+                <div class="bg-gray-50 rounded-2xl p-6">
+                    <h3 class="font-semibold mb-4 text-gray-900">🔑 Authentication</h3>
+                    <p class="text-gray-600 text-sm mb-4">All agent API calls require your unique Agent UID in the header:</p>
+                    <div class="code-block">
+                        <pre><code class="language-http text-gray-300 text-sm">X-Agent-UID: KA-abc123xyz</code></pre>
+                    </div>
+                </div>
+                <div class="bg-gray-50 rounded-2xl p-6">
+                    <h3 class="font-semibold mb-4 text-gray-900">📥 Webhook Payload</h3>
+                    <p class="text-gray-600 text-sm mb-4">When payment completes, your webhook receives:</p>
+                    <div class="code-block">
+                        <pre><code class="language-json text-gray-300 text-sm">{
+  "event": "payment.completed",
+  "payment_id": "pay_xxx",
+  "amount": 10.00,
+  "currency": "USDC",
+  "status": "completed"
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Full Documentation Link -->
+            <div class="mt-8 text-center">
+                <a href="agent-flow.html" class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium">
+                    📄 View Full Agent Flow Documentation →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code Examples -->
+    <section id="code-examples" class="px-6 py-20 bg-gray-50">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-4 text-gray-900">Code Examples</h2>
+            <p class="text-gray-500 text-center mb-12">Copy-paste into your agent</p>
+            
+            <!-- JavaScript -->
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900">JavaScript / Node.js</h3>
+                <div class="code-block">
+                    <div class="flex border-b border-gray-700">
+                        <button onclick="showCode('js-register')" class="code-tab px-4 py-2 text-sm text-gray-400 hover:text-white active" data-tab="js-register">Register</button>
+                        <button onclick="showCode('js-payment')" class="code-tab px-4 py-2 text-sm text-gray-400 hover:text-white" data-tab="js-payment">Create Payment</button>
+                        <button onclick="showCode('js-webhook')" class="code-tab px-4 py-2 text-sm text-gray-400 hover:text-white" data-tab="js-webhook">Webhook Handler</button>
+                    </div>
+                    <pre><code id="js-code" class="language-javascript text-gray-300 text-sm">const API_BASE = 'https://your-middleware.com';
+
+// 1. Register your agent
+async function registerAgent(name, walletAddress) {
+  const res = await fetch(`${API_BASE}/v1/agents/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+      name, 
+      wallet_address: walletAddress 
+    })
+  });
+  const { agent } = await res.json();
+  return agent.uid; // e.g., "KA-abc123xyz"
+}
+
+// 2. Create payment link
+async function createPaymentLink(agentUid, amount, description) {
+  const res = await fetch(`${API_BASE}/v1/payments/create-link`, {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+      'X-Agent-UID': agentUid
+    },
+    body: JSON.stringify({ 
+      amount, 
+      description 
+    })
+  });
+  const { payment } = await res.json();
+  return payment.link; // Send this to customer
+}</code></pre>
+                </div>
+            </div>
+            
+            <!-- Python -->
+            <div>
+                <h3 class="text-lg font-semibold mb-4 text-gray-900">Python</h3>
+                <div class="code-block">
+                    <div class="flex border-b border-gray-700">
+                        <button onclick="showCode('py-register')" class="code-tab px-4 py-2 text-sm text-gray-400 hover:text-white" data-tab="py-register">Register</button>
+                        <button onclick="showCode('py-payment')" class="code-tab px-4 py-2 text-sm text-gray-400 hover:text-white" data-tab="py-payment">Create Payment</button>
+                        <button onclick="showCode('py-webhook')" class="code-tab px-4 py-2 text-sm text-gray-400 hover:text-white" data-tab="py-webhook">Webhook Handler</button>
+                    </div>
+                    <pre><code id="py-code" class="language-python text-gray-300 text-sm">import requests
+
+API_BASE = 'https://your-middleware.com'
+
+# 1. Register your agent
+def register_agent(name: str, wallet_address: str) -> str:
+    res = requests.post(f'{API_BASE}/v1/agents/register', json={
+        'name': name,
+        'wallet_address': wallet_address
+    })
+    agent = res.json()['agent']
+    return agent['uid']  # e.g., "KA-abc123xyz"
+
+# 2. Create payment link
+def create_payment_link(agent_uid: str, amount: float, description: str) -> str:
+    res = requests.post(
+        f'{API_BASE}/v1/payments/create-link',
+        headers={'X-Agent-UID': agent_uid},
+        json={'amount': amount, 'description': description}
+    )
+    return res.json()['payment']['link']
+
+# 3. Webhook handler (Flask example)
+from flask import Flask, request, jsonify
+app = Flask(__name__)
+
+@app.route('/webhook', methods=['POST'])
+def handle_webhook():
+    data = request.json
+    if data['event'] == 'payment.completed':
+        print(f"Got paid! {data['payment']['amount']}")
+        # TODO: Credit the customer, send product, etc.
+    return jsonify({'ok': True})</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Stats -->
     <section class="px-6 py-12 bg-gray-50">
         <div class="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -113,34 +352,8 @@
         </div>
     </section>
 
-    <!-- How it Works -->
-    <section id="how-it-works" class="px-6 py-20">
-        <div class="max-w-4xl mx-auto">
-            <h2 class="text-3xl font-bold text-center mb-4 text-gray-900">How It Works</h2>
-            <p class="text-gray-500 text-center mb-16">Three steps to autonomous payments</p>
-            
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="text-center p-6">
-                    <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center text-xl font-bold text-blue-600">1</div>
-                    <h3 class="font-semibold mb-2 text-gray-900">Register</h3>
-                    <p class="text-gray-500 text-sm">Your agent registers with a unique ID and wallet address</p>
-                </div>
-                <div class="text-center p-6">
-                    <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center text-xl font-bold text-blue-600">2</div>
-                    <h3 class="font-semibold mb-2 text-gray-900">Create Link</h3>
-                    <p class="text-gray-500 text-sm">Generate payment links via API for any amount</p>
-                </div>
-                <div class="text-center p-6">
-                    <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center text-xl font-bold text-blue-600">3</div>
-                    <h3 class="font-semibold mb-2 text-gray-900">Get Paid</h3>
-                    <p class="text-gray-500 text-sm">Receive payments across any chain, instantly</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Features -->
-    <section id="features" class="px-6 py-20 bg-gray-50">
+    <section id="features" class="px-6 py-20">
         <div class="max-w-4xl mx-auto">
             <h2 class="text-3xl font-bold text-center mb-16 text-gray-900">Built for the Agent Economy</h2>
             
@@ -170,7 +383,7 @@
     </section>
 
     <!-- Agent Register Section -->
-    <section id="agent-register" class="px-6 py-20">
+    <section id="agent-register" class="px-6 py-20 bg-gray-50">
         <div class="max-w-xl mx-auto">
             <div class="bg-white border border-gray-200 rounded-3xl p-8 md:p-10 shadow-lg">
                 <div class="text-center mb-8">
@@ -187,6 +400,11 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Wallet Address</label>
                         <input type="text" id="walletAddress" required class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition" placeholder="0x...">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Webhook URL (optional)</label>
+                        <input type="url" id="webhookUrl" class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition" placeholder="https://your-agent.com/webhook">
+                        <p class="text-xs text-gray-500 mt-1">We'll notify this URL when payments complete</p>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Use Case (optional)</label>
@@ -207,33 +425,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Code Example -->
-    <section class="px-6 py-20 bg-gray-900">
-        <div class="max-w-3xl mx-auto">
-            <h2 class="text-3xl font-bold text-center mb-8 text-white">API First</h2>
-            <div class="bg-gray-800 border border-gray-700 rounded-2xl overflow-hidden">
-                <div class="flex border-b border-gray-700">
-                    <button onclick="showTab('register')" id="tab-register" class="flex-1 px-6 py-3 text-sm text-blue-400 border-b-2 border-blue-500">Register Agent</button>
-                    <button onclick="showTab('payment')" id="tab-payment" class="flex-1 px-6 py-3 text-sm text-gray-500 hover:text-white transition">Create Payment</button>
-                </div>
-                <div class="p-6">
-                    <pre id="code-example" class="text-sm text-gray-300 overflow-x-auto"><code class="language-javascript">// Register your agent
-const response = await fetch('/v1/agents/register', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    name: 'My-AI-Agent',
-    wallet_address: '0x742d35Cc6634C0532925a3b844Bc9e7595f0fAb1'
-  })
-});
-
-const { data } = await response.json();
-// { agent: { uid: 'KA-abc123...', ... } }</code></pre>
                 </div>
             </div>
         </div>
@@ -261,49 +452,231 @@ const { data } = await response.json();
     </footer>
 
     <script>
-        // UPDATE THIS to your middleware API URL
         const API_BASE = 'https://your-middleware-url.com';
 
-        function showTab(tab) {
-            const registerCode = `// Register your agent
-const response = await fetch('/v1/agents/register', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    name: 'My-AI-Agent',
-    wallet_address: '0x742d35Cc6634C0532925a3b844Bc9e7595f0fAb1'
-  })
-});
+        // Code examples
+        const codeExamples = {
+            'js-register': `const API_BASE = 'https://your-middleware.com';
 
-const { data } = await response.json();`;
-            
-            const paymentCode = `// Create a payment link
-const response = await fetch('/v1/payments/create-link', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    agentId: 'KA-abc123...',
-    amount: 10,
-    chainId: 8453,
-    token: 'USDC'
-  })
-});
+// 1. Register your agent
+async function registerAgent(name, walletAddress) {
+  const res = await fetch(\`\${API_BASE}/v1/agents/register\`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+      name, 
+      wallet_address: walletAddress 
+    })
+  });
+  const { agent } = await res.json();
+  return agent.uid; // e.g., "KA-abc123xyz"
+}
 
-const { data } = await response.json();`;
+// 2. Create payment link
+async function createPaymentLink(agentUid, amount, description) {
+  const res = await fetch(\`\${API_BASE}/v1/payments/create-link\`, {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+      'X-Agent-UID': agentUid
+    },
+    body: JSON.stringify({ 
+      amount, 
+      description 
+    })
+  });
+  const { payment } = await res.json();
+  return payment.link; // Send this to customer
+}
 
-            document.getElementById('code-example').innerHTML = '<code>' + (tab === 'register' ? registerCode : paymentCode) + '</code>';
-            
-            document.getElementById('tab-register').className = tab === 'register' ? 'flex-1 px-6 py-3 text-sm text-blue-400 border-b-2 border-blue-500' : 'flex-1 px-6 py-3 text-sm text-gray-500 hover:text-white transition';
-            document.getElementById('tab-payment').className = tab === 'payment' ? 'flex-1 px-6 py-3 text-sm text-blue-400 border-b-2 border-blue-500' : 'flex-1 px-6 py-3 text-sm text-gray-500 hover:text-white transition';
+// 3. Webhook handler (Express example)
+app.post('/webhook', async (req, res) => {
+  const { event, payment_id, amount } = req.body;
+  if (event === 'payment.completed') {
+    console.log(\`Got paid \${amount}!\`);
+    // TODO: Credit customer, send product, etc.
+  }
+  res.json({ ok: true });
+});`,
+
+            'js-payment': `// Get payment status
+async function getPaymentStatus(agentUid, paymentId) {
+  const res = await fetch(\`\${API_BASE}/v1/payments/\${paymentId}\`, {
+    headers: { 'X-Agent-UID': agentUid }
+  });
+  return await res.json();
+}
+
+// Cancel pending payment
+async function cancelPayment(agentUid, paymentId) {
+  const res = await fetch(\`\${API_BASE}/v1/payments/\${paymentId}/cancel\`, {
+    method: 'POST',
+    headers: { 'X-Agent-UID': agentUid }
+  });
+  return await res.json();
+}
+
+// Register webhook for instant notifications
+async function registerWebhook(agentUid, webhookUrl) {
+  const res = await fetch(\`\${API_BASE}/v1/webhooks\`, {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+      'X-Agent-UID': agentUid
+    },
+    body: JSON.stringify({ url: webhookUrl })
+  });
+  return await res.json();
+}`,
+
+            'js-webhook': `// Webhook payload your agent receives:
+{
+  "event": "payment.completed",
+  "agent_uid": "KA-abc123xyz",
+  "payment": {
+    "payment_id": "pay_xxx",
+    "amount": 10.00,
+    "currency": "USDC",
+    "status": "completed"
+  },
+  "timestamp": "2026-03-12T12:00:00Z"
+}
+
+// Full webhook handler example
+app.post('/my-webhook', express.json(), (req, res) => {
+  const { event, payment, agent_uid } = req.body;
+  
+  switch (event) {
+    case 'payment.completed':
+      // Credit the customer
+      console.log(\`Payment received: \${payment.amount} \${payment.currency}\`);
+      break;
+    case 'payment.failed':
+      // Handle failed payment
+      console.log(\`Payment failed: \${payment.payment_id}\`);
+      break;
+  }
+  
+  res.status(200).send('OK');
+});`,
+
+            'py-register': `import requests
+
+API_BASE = 'https://your-middleware.com'
+
+# 1. Register your agent
+def register_agent(name: str, wallet_address: str) -> str:
+    res = requests.post(f'{API_BASE}/v1/agents/register', json={
+        'name': name,
+        'wallet_address': wallet_address
+    })
+    agent = res.json()['agent']
+    return agent['uid']  # e.g., "KA-abc123xyz"
+
+# 2. Create payment link
+def create_payment_link(agent_uid: str, amount: float, description: str) -> str:
+    res = requests.post(
+        f'{API_BASE}/v1/payments/create-link',
+        headers={'X-Agent-UID': agent_uid},
+        json={'amount': amount, 'description': description}
+    )
+    return res.json()['payment']['link']
+
+# 3. Register webhook
+def register_webhook(agent_uid: str, url: str) -> dict:
+    res = requests.post(
+        f'{API_BASE}/v1/webhooks',
+        headers={'X-Agent-UID': agent_uid},
+        json={'url': url}
+    )
+    return res.json()`,
+
+            'py-payment': `# Get payment status
+def get_payment_status(agent_uid: str, payment_id: str) -> dict:
+    res = requests.get(
+        f'{API_BASE}/v1/payments/{payment_id}',
+        headers={'X-Agent-UID': agent_uid}
+    )
+    return res.json()
+
+# Cancel pending payment
+def cancel_payment(agent_uid: str, payment_id: str) -> dict:
+    res = requests.post(
+        f'{API_BASE}/v1/payments/{payment_id}/cancel',
+        headers={'X-Agent-UID': agent_uid}
+    )
+    return res.json()
+
+# List all payments
+def list_payments(agent_uid: str) -> list:
+    res = requests.get(
+        f'{API_BASE}/v1/transactions',
+        headers={'X-Agent-UID': agent_uid}
+    )
+    return res.json()['transactions']`,
+
+            'py-webhook': `# Webhook payload your agent receives:
+{
+    "event": "payment.completed",
+    "agent_uid": "KA-abc123xyz",
+    "payment": {
+        "payment_id": "pay_xxx",
+        "amount": 10.00,
+        "currency": "USDC",
+        "status": "completed"
+    },
+    "timestamp": "2026-03-12T12:00:00Z"
+}
+
+# Webhook handler (Flask example)
+from flask import Flask, request, jsonify
+app = Flask(__name__)
+
+@app.route('/webhook', methods=['POST'])
+def handle_webhook():
+    data = request.json
+    event = data.get('event')
+    payment = data.get('payment', {})
+    
+    if event == 'payment.completed':
+        amount = payment.get('amount')
+        currency = payment.get('currency')
+        print(f"Got paid! {amount} {currency}")
+        # TODO: Credit customer, send product, etc.
+        
+    elif event == 'payment.failed':
+        print(f"Payment failed: {payment.get('payment_id')}")
+    
+    return jsonify({'ok': True})`
+        };
+
+        function showCode(key) {
+            // Update JS code
+            if (key.startsWith('js-')) {
+                document.getElementById('js-code').textContent = codeExamples[key];
+                document.querySelectorAll('#code-examples .code-block:first-child .code-tab').forEach(t => {
+                    t.classList.toggle('active', t.dataset.tab === key);
+                });
+            }
+            // Update Python code
+            if (key.startsWith('py-')) {
+                document.getElementById('py-code').textContent = codeExamples[key];
+                document.querySelectorAll('#code-examples .code-block:last-child .code-tab').forEach(t => {
+                    t.classList.toggle('active', t.dataset.tab === key);
+                });
+            }
         }
 
+        // Form handling
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('agentName').value;
             const wallet_address = document.getElementById('walletAddress').value;
+            const webhook_url = document.getElementById('webhookUrl').value;
             const use_case = document.getElementById('useCase').value;
 
             try {
+                // Register agent
                 const res = await fetch(`${API_BASE}/v1/agents/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -312,8 +685,21 @@ const { data } = await response.json();`;
                 const data = await res.json();
                 
                 if (data.success) {
-                    document.getElementById('resultAgentId').textContent = data.data.agent.uid;
+                    const agentUid = data.agent.uid;
+                    document.getElementById('resultAgentId').textContent = agentUid;
                     document.getElementById('result').classList.remove('hidden');
+                    
+                    // Register webhook if provided
+                    if (webhook_url) {
+                        await fetch(`${API_BASE}/v1/webhooks`, {
+                            method: 'POST',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'X-Agent-UID': agentUid
+                            },
+                            body: JSON.stringify({ url: webhook_url })
+                        });
+                    }
                 } else {
                     alert('Error: ' + data.error.message);
                 }
